@@ -29,11 +29,11 @@ nodemon allows me to save changes in the server and not need to reboot in order 
 
 Add the following scripts to the package JSON to enable nodemon to work:
 
-```
+``` JSON
 
 
-"start: " 'node server.js'
-"server: " 'nodemon server.js'
+"start": "node server.js"
+"server": "nodemon server.js"
 
 
 ```
@@ -214,3 +214,161 @@ router.delete('/:id', (req, res) => {
 - I can test this with a delete request in postman ![delete item request](delete_req.png).
 
 Now the Backend API is complete.
+
+## Setting up Frontend (React)
+- Create a folder called client
+
+- ``` cd client ```
+
+- If you dont have react app installed globally then...
+
+- ``` npm i -g create-react-app ``` or if installed already then just use ```create-react-app .```
+
+- This creates a package.json in the client folder which is separate to the server package.json.
+
+- you need to add a proxy value in the client package.json. This will make it understand axios.get('http://localhost:5000/api/items') with just axios.get('api/items').
+
+- To do this under scripts in the client package.json put
+
+``` JSON
+"scripts":{
+/* scripts */
+  },
+"proxy": "http://localhost:5000",
+```
+
+- We want to run both back and front end at the same time and to do this we use concurrently. (this is why we installed this earlier)
+
+- Add client script to the server package.json scripts
+
+``` JSON
+"client": "npm start --prefix client"
+```
+
+- the -- prefix client makes it go into the client folder and run npm start.
+
+- We now want a script that runs both the server an the client simultaneously. In the server package.json add...
+
+```   JSON
+"dev": "concurrently \"npm run server\" \"npm run client\""
+```
+
+- We can put a client install script. This means if someone clones the repo then they can use ``` npm run client install
+``` and not need to go into the client folder to install dependencies.
+
+``` JSON
+"client-install": "npm install --prefix client",
+
+```
+
+- Now our scripts are set up if we use ```npm run dev``` then not only will the back end start but also the front end will load up and the react server will open. like so...
+
+![react front ent](react_server.png)
+
+Now we start working on our react app.
+## React
+
+- In client folder we can start cleaning up the out of the box material.
+ - Delete logo.svg in src folder.
+ - Delete index.css in src folder.
+ - Keep App.css but remove content from inside.
+ - In index.js file remove import for index.css
+ - Remove import logo.svg from App.js file.
+ - Only leave the parent div in the render of the App.js file. then put Hello world in a h1 between this div.
+
+- We need to ad dependencies to the react application.
+
+- open a new terminal and ``` cd client ```
+
+- ``` npm i bootstrap reactstrap uuid react-transition-group
+```
+ - Bootstrap: allows to use bootstrap css
+ - Reactstrap: Allows to use bootstrap components as react components.
+ - UUID: Generates random id's
+ - React-transition-group
+
+#### Creating a Nav Bar
+- import bootstrap in App.js file
+
+``` Javascript
+// client/src/App.js
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+```
+
+- You can now see that the font has changes in the h1 as it has css.
+
+- in scr folder we need to create a folder call components and in that folder we will have a file called AppNavbar.js
+
+- We will be using React strap and the [documentation](https://reactstrap.github.io/components/alerts/) has examples of loads of things to use.
+
+- To start we will need to create a React component
+
+``` Javascript
+import React, { Component } from 'react';
+// All components that you want to import from https://reactstrap.github.io/components/alerts/
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink,
+  Container
+} from 'reactstrap';
+
+class AppNavbar extends Component {
+  state = {
+      isOpen: false
+  }
+  // state is closed
+  toggle = () => {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
+  // Toggle will change state to open
+  }
+
+  render() {
+    return (
+      <div>
+        <Navbar color="dark" dark expand="sm" className="mb-5">
+          <Container>
+            <NavbarBrand href="/">ShoppingList</NavbarBrand>
+            <NavbarToggler   onClick={this.toggle} />
+            <Collapse isOpen={this.state.isOpen} navbar>
+              <Nav className="ml-auto" navbar>
+                <NavItem>
+                  <NavLink href="https://github.com/bmoishe">
+                    Git Hub
+                  </NavLink>
+                </NavItem>
+              </Nav>
+            </Collapse>
+          </Container>
+        </Navbar>
+      </div>
+    );
+  }
+}
+
+
+export default AppNavbar;
+```
+- Now we need to include this in our App.js file.
+
+``` Javascript
+// client/src/App.js
+import AppNavbar from './component/AppNavbar'
+```
+
+Also you will need to replace hello world in App.js with AppNavbar
+``` Javascript
+// client/src/App.js
+<div className="App">
+  <AppNavbar/>
+</div>
+```
+Woila:
+![Responsive Nav Bar](nav_bar.png)
