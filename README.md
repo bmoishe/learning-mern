@@ -379,4 +379,4 @@ Also you will need to replace hello world in App.js with AppNavbar
 </div>
 ```
 Woila:
-![Responsive Nav Bar](nav_bar.png).
+![Responsive Nav Bar](nav_bar.png)
