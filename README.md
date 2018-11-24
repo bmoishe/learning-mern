@@ -3,21 +3,13 @@ I will follow a tutorial by Travesty Media that teaches how to learn the MERN st
 
 ## What does the MERN stack consist of?
 
-<b>MongoDB:
+- MongoDB: No SQL Data base
 
-No SQL Data base
+- Express: Backend framework (mostly used for building API's)
 
-<b>Express:
+- React: Frontend UI library/ framework
 
- Backend framework (mostly used for building API's)
-
-<b> React:
-
- Frontend UI library/ framework
-
-<b>Node JS:
-
-JS runtime (allows to use javascript as a server side technology).
+- Node JS: JS runtime (allows to use javascript as a server side technology).
 
 ## Getting started
 ```npm init ``` - this Creates a package JSON file.
