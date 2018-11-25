@@ -1162,4 +1162,4 @@ const port = process.env.PORT || 5000;
 
 - Ensure you have git installed and initialise the repository then add heroku repository which is provided on that screen. something like this(heroku git:remote -a moishe's-cool-87016) .
 
-- on [ heroku's dashboard ]('https://dashboard.heroku.com/login')
+-- Now ```git push heroku master```
