@@ -932,4 +932,176 @@ default:
 
 ```
 - This can add items in the UI. Now we need to make it add to the Backend.
-.......
+
+### Connecting the Backend
+- In the itemReducer.js file we need to remove the static content that we pull through. Keep the items array empty.
+
+``` Javascript
+// client/src/itemReducer
+//  we need to add ITEMS_LOADING as an import from the action/types file
+import { GET_ITEMS, ADD_ITEM, DELETE_ITEM, ITEMS_LOADING } from '../actions/types';
+const initialState = {
+  items: [
+// Remove static items to have an empt array  { id: uuid(), name: 'Eggs' },
+  // { id: uuid(), name: 'Steak' },
+  // { id: uuid(), name: 'Milk' },
+  // { id: uuid(), name: 'Candy' }
+],
+  // Add loading value to false and we will set to true when we receive the data
+  loading: false
+};
+```
+
+- Lets add ITEMS_LOADING to types
+
+```Javascript
+// client/src/actions/types.js
+export const ITEMS_LOADING = 'ITEMS_LOADING';
+
+```
+- We need to add this as a case in itemReducer
+```Javascript
+// client/src/reducer/itemReducer.js
+case ITEMS_LOADING:
+  return {
+    ...state,
+    loading: true
+  }
+```
+- We need to add in out itemsActions file setItemsLoading.
+``` Javascript
+// client/src/actions/itemActions.js
+import { GET_ITEMS, ADD_ITEM, DELETE_ITEM, ITEMS_LOADING } from './types';
+// at the bottom add...
+export const setItemsLoading = () => {
+  return {
+    type: ITEMS_LOADING
+  };
+};
+```
+- Now we need to fetch the items
+
+- Lets install axios on client folders
+ - ```npm i axios ``` (this is a http client)
+- import axios in itemActions.js file
+
+``` Javascript
+// client/src/actions/itemActions.js
+import axios from 'axios';
+// we need to add dispatch to get items to make it asynchronous
+export const getItems = () => dispatch => {
+  // Remove
+  // return {
+  //   type: GET_ITEMS
+  // };
+  dispatch(setItemsLoading());
+  axios
+   .get('/api/items')
+   .then(res =>
+     dispatch({
+       type: GET_ITEMS,
+       payload: res.data
+     })
+   )
+};
+
+```
+- In reducer on get items we need to also get the items
+``` Javascript
+switch(action.type){
+  case GET_ITEMS:
+    return {
+      ...state,
+      items: action.payload,
+      loading: false
+      // This makes a copy of the current state and adding items from action.payload. We also return loading back to false
+    }
+```
+- This is now using data from the database.
+- Now lets use the add item
+
+``` Javascript
+
+  // replace
+  // export const addItem = (item) => {
+  //   return {
+  //     type: ADD_ITEM,
+  //     payload: item
+  //   };
+  // };
+  // with
+export const addItem = item => dispatch => {
+  axios
+    .post('api/items', item)
+    .then(res =>
+      dispatch({
+        type: ADD_ITEM,
+        payload: res.data
+      })
+    )
+  };
+
+```
+- We need to remove uuid from itemModal
+```Javascript
+// components/itemModal.js
+// Remove
+// import uuid from 'uuid';
+const  newItem = {
+  // Remove
+  // id: uuid(),
+  name: this.state.name
+}
+```
+
+- We need to remove uuid from reducer
+``` Javascript
+// itemReducer.js
+// import uuid from 'uuid';
+```
+- Now we need to update delete
+
+- We need to update id in shoppingList.js to _id as mongo uses _id not id.
+
+``` Javascript
+// ShoppingList.js
+{items.map(({_id, name }) => (
+  <CSSTransition key={_id} timeout={500} classNames="fade">
+    <ListGroupItem>
+    <Button
+      className="remove-btn"
+      color="danger"
+      size="sm"
+      onClick={this.onDeleteClick.bind(this, _id)}
+```
+- We need to sort out action for delete item like we did with get and add.
+
+``` Javascript
+// actions/itemsActions
+export const deleteItem = id => dispatch => {
+// Remove
+  // return {
+  //   type: DELETE_ITEM,
+  //   payload: id
+  // };
+  axios.delete(`/api/items/${id}`).then(res => dispatch({
+    type: DELETE_ITEM,
+    payload: id
+  })
+)
+};
+```
+- In the reducer
+
+``` Javascript
+// itemReducer.js
+// Update id to be _id
+case DELETE_ITEM:
+  return {
+    ...state,
+    items: state.items.filter(item => item._id !== action.payload)
+  };
+```
+- We now have a full stack MERN application
+
+Now lets deploy this online
