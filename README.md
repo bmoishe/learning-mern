@@ -523,3 +523,421 @@ import ShoppingList from './components/ShoppingList'
 ```
 
 ![items added](aligned.png)
+
+### Implementing Redux
+
+- Make sure you are in the client folder
+ - ``` npm i  redux react-redux redux-thunk```
+ - redux: A state manager where we keep out data in the front end
+ - react-redux: binds react to redux
+ - redux-thunk: Way to make async calls to server
+
+- in client/src folder create a file called store.js. [Redux](https://redux.js.org/api/store) says
+"A store holds the whole state tree of your application. The only way to change the state inside it is to dispatch an action on it."
+
+``` Javascript
+// client/src/store.js
+import { createStore applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from './reducers';
+
+const initialState = {};
+
+const middleware = [thunk];
+
+const store = createStore(rootReducer, initialState, compose(
+  applyMiddleware(...middleware),
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+));
+
+export default store;
+
+```
+
+- In App.js we need to bring in a provider
+
+``` Javascript
+// client/src/App.js
+import { Provider } from 'react-redux';
+import store from './store';
+```
+- In order to use redux we need to wrap everything in our return with the provider
+``` Javascript
+// client/src/App.js
+return (
+  // from here too...
+  <Provider store={store}>
+    <div className="App">
+      <AppNavbar />
+      <ShoppingList />
+    </div>
+  </Provider>
+  // here
+);
+```
+- Now we can access stuff from our state to our components
+
+- Now create a folder called reducers in the src folder and in that a file called index.js this is to bring together all reducers. src/reducers/index.js
+
+``` Javascript
+import { combineReducers } from 'redux';
+import itemReducer from './itemReducer'
+
+export default combineReducers({
+  item: itemReducer
+});
+
+ ```
+ - Now to create a item reducer (client/src/reducer/itemReducer.js). This is where our state is going to go and where we check out actions.
+
+ ``` Javascript
+// client/src/reducer/itemReducer.js
+import uuid from 'uuid';
+// Ultimately we will be removing this once we get out data from the database.
+const initialState = {
+  items: [
+    { id: uuid(), name: 'Eggs' },
+    { id: uuid(), name: 'Steak' },
+    { id: uuid(), name: 'Milk' },
+    { id: uuid(), name: 'Water' }
+  ]
+}
+ ```
+- Create a folder called actions in src folder and a file called types.js (client/src/actions/types.js)( these will be a set of conststands set to strings that we export)
+
+``` Javascript
+// client/src/actions/types.js
+export const GET_ITEMS = 'GET_ITEMS';
+export const ADD_ITEM = 'ADD_ITEM';
+export const DELETE_ITEM = 'DELETE_ITEM';
+// Add an action type fro anything you will do in the applications
+```
+- No bring these in to the reducers
+``` Javascript
+// client/src/reducer/itemReducer.js
+import { GET_ITEMS, ADD_ITEM, DELETE_ITEM } from '../actions/types';
+```
+- We need to add a switch statement in the reducer.
+
+``` Javascript
+// client/src/reducer/itemReducer.js
+export default function(state = initialState, action) {
+  switch(action.type){
+    case GET_ITEMS:
+      return {
+        ...state
+      }
+    default:
+      return state;
+  }
+}
+```
+- Now we need an action to use: create a file called itemsActions.js
+
+``` Javascript
+// client/src/itemsActions.js
+import { GET_ITEMS, ADD_ITEM, DELETE_ITEM } from './types';
+
+export const getItems = () => {
+  return {
+    type: GET_ITEMS
+  };
+};
+```
+
+- Now to call this from the the Component rather than the state in the ShoppingList
+
+``` Javascript
+// client/components/ShoppingList
+import { connect } from 'react-redux';
+import { getItems } from '../actions/itemsActions';
+import PropTypes from 'prop-types'
+// remove state from shopping list class and replace with
+
+
+// state = {
+//   items: [
+//     { id: uuid(), name: 'Eggs' },
+//     { id: uuid(), name: 'Steak' },
+//     { id: uuid(), name: 'Milk' },
+//     { id: uuid(), name: 'Water' }
+//   ]
+// }
+// and replace with
+ componentDidMount() {
+   this.props.getItems();
+ }
+ render() {
+   // add this in this.props.item instead of this.state
+   const { items } = this.props.item;
+   return(
+
+// at the bottom of the page update export default ShoppingList; instead of exporting the class we export connect and the component wrapped in it
+
+ShoppingList.propTypes = {
+  getItems: PropTypes.func.isRequired,
+  item: PropTypes.object.isRequired
+}
+const mapStateToProps = (state) => ({
+  item: state.item
+});
+
+export default connect(mapStateToProps, { getItems }) (ShoppingList);
+
+```
+
+- We now need to update the delete items to use the reducer and create a new feature for adding a item.
+
+First we need to remove the button for adding item as we will not use this and more
+
+``` Javascript
+// client/components/ShoppingList
+// remove all this
+<Button
+  color="dark"
+  style={{marginBottom: '2rem'}}
+  onClick={() => {
+    const name = prompt('Enter Item');
+    if(name) {
+      this.setState(state => ({
+        items: [...state.items, { id: uuid(), name }]
+      }));
+    }
+  }}
+  >Add Item</Button>
+
+```
+- Add deleteItem:
+``` Javascript
+// client/components/ShoppingList
+// remove import uuid from 'uuid'; as we no longer need this.
+// add deleteItem to the imports from itemsActions file
+import { getItems, deleteItem } from '../actions/itemsActions';
+// ensure deleteItem is in the export at the bottom.
+export default connect(mapStateToProps, { getItems, deleteItem })(ShoppingList);
+```
+- Now in itemsActions file we need to create the delete function
+
+``` Javascript
+// client/src/Actions/itemsActions.js
+// Copy the previously use getItems and change to the following
+export const deleteItem = (id) => {
+  return {
+    type: DELETE_ITEM,
+    payload: id
+  };
+};
+
+```
+- Add a case for delete in reducer.
+``` Javascript
+// client/src/reducers/itemReducer.js
+export default function(state = initialState, action) {
+  switch(action.type){
+    case GET_ITEMS:
+      return {
+        ...state
+      }
+    case DELETE_ITEM:
+      return {
+        ...state,
+        items: state.items.filter(item => item.id !== action.payload)
+      };
+    default:
+      return state;
+  }
+
+```
+- Now we need to update the component by setting up a function access the delete. (Remove the existing code for the onClick) e.g.
+``` Javascript  
+// client/components/ShoppingList
+onClick={
+// remove this
+  () => {
+  this.setState(state => ({
+    items: state.items.filter(item => item.id !== id)
+  }));
+}}
+```
+- Replace with
+
+``` Javascript
+// client/components/ShoppingList
+onClick={this.onDeleteClick.bind(this, id)}
+```
+- Should create this method
+```Javascript
+// client/components/ShoppingList
+onDeleteClick = (id) => {
+  this.props.deleteItem(id)
+}
+```
+- Now to create the modal (add) component. Let create a file in component called ItemModal.js (client/src/components/ItemModal.js).
+
+``` Javascript
+// client/src/components/ItemModal.js
+import React, { Component } from 'react';
+import {
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Form,
+  FormGroup,
+  Label,
+  Input
+} from 'reactstrap';
+import { connect } from 'react-redux';
+import { addItem } from '../actions/itemActions';
+
+class ItemModal extends Component {
+  state = {
+    modal: false,
+    name: ''
+  }
+
+  toggle = () => {
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+
+  onChange = (e) => {
+    this.setState({[e.target.name]: e.target.value });
+  }
+  render() {
+    return(
+      <div>
+        <Button
+          color="dark"
+          style={{marginBottom: '2rem'}}
+          onClick={this.toggle}
+        >Add Item</Button>
+        <Modal
+          isOpen={this.state.modal}
+          toggle={this.toggle}
+        >
+          <ModalHeader toggle={this.toggle}>
+          Add To Shopping List
+          </ModalHeader>
+            <ModalBody>
+              <Form onSubmit={this.onSubmit}>
+                <FormGroup>
+                  <Label for="item">Item</Label>
+                    <Input
+                      type="text"
+                      name="name"
+                      id="item"
+                      placeholder="Add shopping item"
+                      onChange={this.onChange}
+                    />
+                    <Button
+                      color="dark"
+                      style={{marginTop: '2rem'}}
+                      block
+                    >Add Item</Button>
+
+                </FormGroup>
+
+              </Form>
+
+            </ModalBody>
+        </Modal>
+      </div>
+    )
+  }
+}
+
+export default connect()(ItemModal);
+
+```
+Inside App.js import modal component and add to render
+``` Javascript
+// client/src/App.js
+import ItemModal from './components/ItemModal';
+import { Container } from 'reactstrap';
+
+// insert between AppNavbar and shoppingList and wrap ItemModal and ShoppingList in a container
+<Container>
+  <ItemModal />
+  <ShoppingList />
+</Container>
+
+```
+
+- Now you have a modal but it does not submit once clicked
+
+![modal](modal.png)
+
+To make this submit we need to add onSubmit in the ItemModal.js file
+``` Javascript
+// client/src/components/ItemModal.js
+import uuid from 'uuid';
+// We are only using this until we link up the back end.
+
+onChange = (e) => {
+  this.setState({[e.target.name]: e.target.value });
+}
+// after here
+onSubmit = e => {
+  e.preventDefault();
+
+  const  newItem = {
+    id: uuid(),
+    name: this.state.name
+  }
+
+  // Add item via addItem actions
+  this.props.addItem(newItem);
+
+  // Close ModalBody
+  this.toggle();
+}
+
+// Before here
+render() {
+
+// we also need to update the export at the bottom of the page by creating mapStateToProps const and updating export.
+
+const mapStateToProps = state => ({
+  item: state.item
+})
+export default connect(mapStateToProps, { addItem })(ItemModal);
+
+```
+
+- We now need to create the add item action in itemsActions.js file.
+
+``` Javascript
+// client/src/actions/itemsActions.js
+export const addItem = (item) => {
+  return {
+    type: ADD_ITEM,
+    payload: item
+  };
+};
+
+```
+
+- Now in the reducer we need to add the case
+
+``` Javascript
+// client/src/reducer/itemsReducer.js
+case DELETE_ITEM:
+  return {
+    ...state,
+    items: state.items.filter(item => item.id !== action.payload)
+  };
+// After This
+  case ADD_ITEM:
+    return {
+      ...state,
+      items: [action.payload, ...state.items]
+    }
+// Before this
+default:
+  return state;
+
+```
+- This can add items in the UI. Now we need to make it add to the Backend.
+.......
