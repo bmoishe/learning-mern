@@ -1,0 +1,24 @@
+.remove-btn {
+  margin-right: 0.5rem;
+  /* This is to align our buttons  */
+}
+/* When we add an item */
+.fade-enter {
+  opacity: 0.01;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+    /* we are transitioning the opacity from hardly visible in fade-enter (0.01) to visible (1) in fade-enter-active */
+}
+/* When we delete an item */
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 1000ms
+  /* We do the reverse on exit */
+}
