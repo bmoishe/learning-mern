@@ -287,7 +287,7 @@ Now we start working on our react app.
  - UUID: Generates random id's
  - React-transition-group
 
-#### Creating a Nav Bar
+#### Creating Nav Bar component
 - import bootstrap in App.js file
 
 ``` Javascript
@@ -372,3 +372,146 @@ Also you will need to replace hello world in App.js with AppNavbar
 ```
 Woila:
 ![Responsive Nav Bar](nav_bar.png)
+
+#### Creating Shopping List component
+
+- Create new file called ShoppingList.js in components folder (client/src/components/ShoppingList.js)
+
+-
+``` Javascript
+// client/src/components/shoppingList.js
+import React, { Component } from 'react';
+import { Container, ListGroup, ListGroupItem, Button } from 'reactstrap';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import uuid from 'uuid';
+
+class ShoppingList extends Component {
+  state = {
+    items: [
+      { id: uuid(), name: 'Eggs' },
+      { id: uuid(), name: 'Steak' },
+      { id: uuid(), name: 'Milk' },
+      { id: uuid(), name: 'Water' }
+    ]
+  }
+
+  render() {
+    const { items } = this.state;
+    return(
+      <Container>
+        <Button
+          color="dark"
+          style={{marginBottom: '2rem'}}
+          onClick={() => {
+            const name = prompt('Enter Item');
+            if(name) {
+              this.setState(state => ({
+                items: [...state.items, { id: uuid(), name }]
+              }));
+            }
+          }}
+          >Add Item</Button>
+      </Container>
+    );
+  }
+}
+export default ShoppingList;
+```
+- import this in App.js
+
+``` Javascript
+/// client/src/App.js
+import ShoppingList from './components/ShoppingList'
+```
+- Add this under AppNavbar
+
+``` Javascript
+/// client/src/App.js
+<div className="App">
+  <AppNavbar/>
+  <ShoppingList/>
+</div>
+```
+- We are now able to add items on the front end (You can see this with the react dev tool)
+
+- No we need to display those items.
+
+``` Javascript
+// client/src/components/shoppingList.js
+>Add Item</Button>
+//  Add between here
+<ListGroup>
+  // map through each item and wrap in TransitionGroup
+  <TransitionGroup className="shopping-list">
+    {items.map(({id, name }) => (
+      <CSSTransition key={id} timeout={500} classNames="fade">
+        <ListGroupItem>{name}</ListGroupItem>
+      </CSSTransition>
+    ))}
+  </TransitionGroup>
+</ListGroup>
+
+//  and here
+</Container>
+```
+- Now you can see items added in the frontend.
+![items added](items_added.png)
+
+- We can now add a delete button between the ListGroupItem tags
+
+``` Javascript
+// client/src/components/shoppingList.js
+
+<ListGroupItem>
+// between here
+<Button
+  className="remove-btn"
+  color="danger"
+  size="sm"
+  onClick={() => {
+    this.setState(state => ({
+      items: state.items.filter(item => item.id !== id)
+    }));
+  }}
+>
+ &times;
+</Button>
+
+
+// and here
+{name}
+</ListGroupItem>
+```
+- We have now can delete items on the front end. ![items added](Delete_item.png)
+
+- Now we can update our CSS to make a fade effect when deleted.
+
+``` CSS
+/* client/src/App.css  */
+.remove-btn {
+  margin-right: 0.5rem;
+  /* This is to align our buttons  */
+}
+/* When we add an item */
+.fade-enter {
+  opacity: 0.01;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+    /* we are transitioning the opacity from hardly visible in fade-enter (0.01) to visible (1) in fade-enter-active */
+}
+/* When we delete an item */
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 1000ms
+  /* We do the reverse on exit */
+}
+```
+
+![items added](aligned.png)
