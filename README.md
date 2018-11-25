@@ -1110,6 +1110,64 @@ case DELETE_ITEM:
     items: state.items.filter(item => item._id !== action.payload)
   };
 ```
+
+- Finishing touch. Change title from react app to Shopping list.
+
+``` HTML
+// client/public/index.html
+    // <title>React App</title>
+        <title>Shopping List</title>
+```
 - We now have a full stack MERN application
 
 Now lets deploy this online
+
+### Time to deploy the app in heroku
+
+In server.js
+``` Javascript
+// Require path
+const path = require('path');
+// Then between Use routes and port...
+// Use routes
+app.use('/api/items', items);
+// under here
+// Serve Static assets if we are in production
+if(process.env.node_env === 'production') {
+  // Set static folders
+  app.use(express.static('client/build'));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  })
+}
+
+// above here
+const port = process.env.PORT || 5000;
+```
+- Now to create the post build script. in the package.json in the servers scripts
+
+``` JSON
+"dev": "concurrently \"npm run server\" \"npm run client\"",
+// under here
+"heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+// above here
+},
+"author": "",
+```
+- This makes it go into client folder and install dependencies.
+
+- now go to [Heroko CLI]('https://devcenter.heroku.com/articles/heroku-cli') and install and sign up.
+
+- Ensure you are in server folder then login with
+``` heroku login ```
+
+- Now to create a new heroku app ``` heroku create ```
+
+- On the [ Heroku's dashboard ]('https://dashboard.heroku.com/login') you will see the name of the url they have provided.
+
+- Click on that and then deploy
+
+- Ensure you have git installed and initialise the repository then add heroku repository which is provided on that screen. something like this(heroku git:remote -a moishe's-cool-87016) .
+
+- on [ heroku's dashboard ]('https://dashboard.heroku.com/login')
