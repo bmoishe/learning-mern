@@ -8,10 +8,10 @@ I will follow a tutorial by Travesty Media that teaches how to learn the MERN st
   * [Now to set up the API](#now-to-set-up-the-api)
   * [Setting up Frontend (React)](#setting-up-frontend--react-)
   * [React](#react)
-      - [Creating Shopping List component](#creating-shopping-list-component)
-    + [Implementing Redux](#implementing-redux)
-    + [Connecting the Backend](#connecting-the-backend)
-    + [Time to deploy the app in heroku](#time-to-deploy-the-app-in-heroku)
+  * [Creating Shopping List component](#creating-shopping-list-component)
+  * [Implementing Redux](#implementing-redux)
+  * [Connecting the Backend](#connecting-the-backend)
+  * [Time to deploy the app in heroku](#time-to-deploy-the-app-in-heroku)
 
 
 ## What does the MERN stack consist of?
@@ -177,7 +177,7 @@ module.exports = router;
 - Now we can create some routes
 
 ``` Javascript
-
+// ./routes/api/items
 // @route GET api/items
 // @desc Get All items
 // @access Public
