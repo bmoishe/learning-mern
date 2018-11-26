@@ -243,7 +243,7 @@ Now the Backend API is complete.
 
 - If you dont have react app installed globally then...
 
-- ``` npm i -g create-react-app ``` or if installed already then just use ```create-react-app .```
+- ``` npm i -g create-react-app ``` or if installed already then just use ```create-react-app client .```
 
 - This creates a package.json in the client folder which is separate to the server package.json.
 
