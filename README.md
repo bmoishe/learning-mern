@@ -24,6 +24,8 @@ I will follow a tutorial by Travesty Media that teaches how to learn the MERN st
 
 - Node JS: JS runtime (allows to use javascript as a server side technology).
 
+[Back to the top](#learning-the-mern-stack)
+
 ## Getting started
 ```npm init ``` - this Creates a package JSON file.
 
@@ -53,6 +55,8 @@ Add the following scripts to the package JSON to enable nodemon to work:
 to run nodemon (we will use this later when this is set up) ``` npm run server ```
 
 Now to create the server.js file and connect to the database.
+
+[Back to the top](#learning-the-mern-stack)
 
 ## Server.js file
 
@@ -107,6 +111,8 @@ app.listen(port, () => console.log('Server started on port '+ port));
 
 ```
 Now I should be able to use ```npm run server ``` in the command line and start the sever.
+
+[Back to the top](#learning-the-mern-stack)
 
 ## Now to set up the API
 This is to get request from the front end to fetch items, post items and delete them from the database.
@@ -228,6 +234,8 @@ router.delete('/:id', (req, res) => {
 
 Now the Backend API is complete.
 
+[Back to the top](#learning-the-mern-stack)
+
 ## Setting up Frontend (React)
 - Create a folder called client
 
@@ -279,6 +287,8 @@ Now the Backend API is complete.
 ![react front ent](react_server.png)
 
 Now we start working on our react app.
+
+[Back to the top](#learning-the-mern-stack)
 ## React
 
 - In client folder we can start cleaning up the out of the box material.
@@ -385,6 +395,8 @@ Also you will need to replace hello world in App.js with AppNavbar
 ```
 Woila:
 ![Responsive Nav Bar](nav_bar.png)
+
+[Back to the top](#learning-the-mern-stack)
 
 #### Creating Shopping List component
 
@@ -528,6 +540,8 @@ import ShoppingList from './components/ShoppingList'
 ```
 
 ![items added](aligned.png)
+
+[Back to the top](#learning-the-mern-stack)
 
 ### Implementing Redux
 
@@ -946,6 +960,8 @@ default:
 ```
 - This can add items in the UI. Now we need to make it add to the Backend.
 
+[Back to the top](#learning-the-mern-stack)
+
 ### Connecting the Backend
 - In the itemReducer.js file we need to remove the static content that we pull through. Keep the items array empty.
 
@@ -1127,6 +1143,8 @@ case DELETE_ITEM:
 
 Now lets deploy this online
 
+[Back to the top](#learning-the-mern-stack)
+
 ### Time to deploy the app in heroku
 
 In server.js
@@ -1176,3 +1194,4 @@ const port = process.env.PORT || 5000;
 - Ensure you have git installed and initialise the repository then add heroku repository which is provided on that screen. something like this(heroku git:remote -a moishe's-cool-87016) .
 
 -- Now ```git push heroku master```
+[Back to the top](#learning-the-mern-stack)
