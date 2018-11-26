@@ -13,8 +13,6 @@ I will follow a tutorial by Travesty Media that teaches how to learn the MERN st
     + [Connecting the Backend](#connecting-the-backend)
     + [Time to deploy the app in heroku](#time-to-deploy-the-app-in-heroku)
 
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
 
 ## What does the MERN stack consist of?
 
