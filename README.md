@@ -1,6 +1,21 @@
 # Learning the MERN stack
 I will follow a tutorial by Travesty Media that teaches how to learn the MERN stack.
 
+## Contents
+  * [What does the MERN stack consist of?](#what-does-the-mern-stack-consist-of-)
+  * [Getting started](#getting-started)
+  * [Server.js file](#serverjs-file)
+  * [Now to set up the API](#now-to-set-up-the-api)
+  * [Setting up Frontend (React)](#setting-up-frontend--react-)
+  * [React](#react)
+      - [Creating Shopping List component](#creating-shopping-list-component)
+    + [Implementing Redux](#implementing-redux)
+    + [Connecting the Backend](#connecting-the-backend)
+    + [Time to deploy the app in heroku](#time-to-deploy-the-app-in-heroku)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 ## What does the MERN stack consist of?
 
 - MongoDB: No SQL Data base
